@@ -14,7 +14,7 @@ pip install python-yubikey
 ## Register for an API key
 
 ```
-import yubikey
+from yubikey import Yubikey
 
 yubi = Yubikey()
 yubi.register('<INSERT OTP HERE>')

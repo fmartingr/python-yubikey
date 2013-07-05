@@ -38,6 +38,7 @@ class YubicoWS(object):
         self.api_ws = self._api_ws % choice(self._servers)
 
     def register_api_key(self, email, otp):
+        "Registers an API Key with the servers"
         data = {
             'email': email,
             'otp': str.lower(otp)
@@ -50,6 +51,7 @@ class YubicoWS(object):
         return ws_response
         
     def verify(self, yubikey_id, otp, key=None):
+        "Verifies the provided OTP with the server"
         endpoint = 'verify'
         url = self.api_ws + endpoint
         
@@ -86,9 +88,11 @@ class YubicoWS(object):
         return ws_response
 
     def sign_otp(self, data, key):
+        "Signs the OTP with the provided key"
         return data
 
     def parse_ws_response(self, text):
+        "Parses the API key=value response into a dict"
         data = {}
         for line in text.strip().split('\n'):
             key, value = line.split('=', 1)
@@ -96,6 +100,7 @@ class YubicoWS(object):
         return data
 
     def generate_nonce(self):
+        "Generates a random string"
         chars = string.ascii_lowercase + string.digits
         return ''.join(choice(chars) for x in range(40))
 
@@ -115,6 +120,7 @@ class Yubikey(object):
             self.key = key
 
     def register(self, email, otp):
+        "Registers this yubikey"
         result = False
         if not self.id:
             credentials = self.ws.register_api_key(email, otp)
@@ -126,6 +132,7 @@ class Yubikey(object):
         return result
         
     def verify(self, otp):
+        "Verify an OTP to check if its valid"
         result = False
         if self.id:
             self.get_prefix(otp)
@@ -137,6 +144,7 @@ class Yubikey(object):
         return result
         
     def get_prefix(self, otp):
+        "Get prefix from an OTP if present"
         if len(otp) > 32:
             self.prefix = str.lower(otp[:-32])
         

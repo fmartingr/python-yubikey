@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import requests
 import string
 from random import choice
@@ -48,7 +49,7 @@ class YubicoWS(object):
             
         return ws_response
         
-    def verify(self, yubikey_id, otp):
+    def verify(self, yubikey_id, otp, key=None):
         endpoint = 'verify'
         url = self.api_ws + endpoint
         
@@ -64,6 +65,10 @@ class YubicoWS(object):
             'nonce': nonce
         }
         
+        # Use API key for signing the message if key is provided
+        if key:
+            data = self.sign_otp(data, key)
+        
         response = requests.get(url, params=data)
         
         ws_response = self.parse_ws_response(response.text)
@@ -74,10 +79,14 @@ class YubicoWS(object):
                 and ws_response['otp'] != otp \
                 and True):
                 raise WSInvalidResponse()
+            # TODO check signature
         else:
             raise WSError(self._errors[ws_response['status']])
         
         return ws_response
+
+    def sign_otp(self, data, key):
+        return data
 
     def parse_ws_response(self, text):
         data = {}
@@ -98,10 +107,12 @@ class Yubikey(object):
     
     _last_result = False
     
-    def __init__(self, yubikey_id=None):
+    def __init__(self, yubikey_id=None, key=None):
         self.ws = YubicoWS()
         if yubikey_id:
             self.id = yubikey_id
+        if key:
+            self.key = key
 
     def register(self, email, otp):
         result = False
@@ -118,7 +129,7 @@ class Yubikey(object):
         result = False
         if self.id:
             self.get_prefix(otp)
-            result = self.ws.verify(self.id, otp)
+            result = self.ws.verify(self.id, otp, key=self.key)
             if result == 'OK':
                 result = True
                 
@@ -145,6 +156,7 @@ class WSInvalidResponse(Exception):
 class WSResponseError(Exception):
     def __str__(self):
         return repr(self.msg)
+
 
 class OTPIncorrectFormat(Exception):
     pass

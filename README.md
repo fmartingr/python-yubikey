@@ -17,15 +17,28 @@ pip install python-yubikey
 from yubikey import Yubikey
 
 yubi = Yubikey()
-yubi.register('<INSERT OTP HERE>')
+yubi.register('<EMAIL>', '<INSERT OTP HERE>')
 # yubi.id and yubi.key are now set
 ```
 
 ## Check valid OTP
 
 ```
+yubi = Yubikey(<ID>, <Key>)
 result = yubi.verify('<INSERT ANOHTER OTP HERE>')
 # True / False
+# If <key> is provided, requests will be signed and the responses checked.
+```
+
+## Optionals
+
+```
+# Using custom API server
+# Must be one of YubicoWS._servers
+yubi = Yubikey(123, 'dGhpc3JlcG9yb2Nrcw==', server='api2.yubico.com')
+
+# Using http instead of https
+yubi = Yubikey(123, 'dGhpc3JlcG9yb2Nrcw==', protocol='http')
 ```
 
 # NO WARRANTY

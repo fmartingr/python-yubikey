@@ -50,7 +50,10 @@ class YubicoWS(object):
         if self._server and self._server in self._servers:
             self.api_ws = self._api_ws % (self._protocol, self._server)
         else:
-            self.api_ws = self._api_ws % (self._protocol, choice(self._servers))
+            self.api_ws = self._api_ws % (
+                self._protocol,
+                choice(self._servers)
+            )
 
     def register_api_key(self, email, otp):
         "Registers an API Key with the servers"
@@ -92,9 +95,9 @@ class YubicoWS(object):
 
         if ws_response['status'] == 'OK':
             # Check if response is valid
-            if not (ws_response['nonce'] == nonce \
-                and ws_response['otp'] != otp \
-                and True):
+            if not (ws_response['nonce'] == nonce
+                    and ws_response['otp'] != otp
+                    and True):
                 raise YubicoWSInvalidResponse()
 
             if key:
@@ -123,10 +126,14 @@ class YubicoWS(object):
             params.append(key_value)
 
         # Join as urlparams
-        string = '&'.join(params)
+        parameters = '&'.join(params)
 
         # hmac-sha1
-        hashed_string = hmac.new(base64.b64decode(key), string, sha1).digest()
+        hashed_string = hmac.new(
+            base64.b64decode(key),
+            parameters,
+            sha1
+        ).digest()
 
         # base64 encode
         signature = base64.b64encode(hashed_string)
@@ -179,9 +186,9 @@ class Yubikey(object):
         if self.id:
             self.get_prefix(otp)
             try:
-                response = self.ws.verify(self.id, otp, key=self.key)
+                self.ws.verify(self.id, otp, key=self.key)
                 result = True
-            except YubicoWSResponseBadSignature, YubicoWSError:
+            except (YubicoWSResponseBadSignature, YubicoWSError):
                 result = False
 
         self._last_result = result

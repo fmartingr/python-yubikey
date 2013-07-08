@@ -87,7 +87,7 @@ class YubicoWS(object):
 
         # Use API key for signing the message if key is provided
         if key:
-            data['h'] = self.sign(data, key).replace('+', '%2B')
+            data['h'] = self.sign(data, key)
 
         response = requests.get(url, params=data)
 
@@ -95,15 +95,14 @@ class YubicoWS(object):
 
         if ws_response['status'] == 'OK':
             # Check if response is valid
-            if not (ws_response['nonce'] == nonce
-                    and ws_response['otp'] != otp
-                    and True):
+            if not (ws_response['nonce'] == data['nonce']
+                    and ws_response['otp'] == otp):
                 raise YubicoWSInvalidResponse()
 
             if key:
                 signature = self.sign(ws_response, key)
 
-                if data['h'] != signature:
+                if ws_response['h'] != signature:
                     raise YubicoWSResponseBadSignature(
                         "The signature sent by the server is invalid"
                     )
@@ -115,15 +114,13 @@ class YubicoWS(object):
 
     def sign(self, data, key):
         "Signs the message with the provided key"
-        if 'h' in data:
-            # Just in case
-            data.pop('h')
-
-        # Sorted k=v dict
+        # Sort k=v dict
         params = []
+
         for k in sorted(data.keys()):
-            key_value = "%s=%s" % (k, data[k])
-            params.append(key_value)
+            if k != 'h':  # Just in case
+                key_value = "%s=%s" % (k, data[k])
+                params.append(key_value)
 
         # Join as urlparams
         parameters = '&'.join(params)

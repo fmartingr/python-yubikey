@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
-import re
+from setuptools import setup
 import os
 import sys
 
+version = '0.1.0'
 
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist upload")
@@ -18,7 +18,7 @@ if sys.argv[-1] == 'publish':
 
 setup(
     name='python-yubikey',
-    version='0.1.0',
+    version=version,
     url='http://github.com/fmartingr/python-yubikey',
     license='GPLv2',
     description='Simple Yubico API Wrappers',

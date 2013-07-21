@@ -8,6 +8,10 @@ import requests
 
 
 class YubicoWS(object):
+    """
+    Yubico Web Service class that interacts with the Yubico API
+    """
+
     register_ws = 'https://upgrade.yubico.com/getapikey/?format=json'
     api_ws = None
 
@@ -152,6 +156,10 @@ class YubicoWS(object):
 
 
 class Yubikey(object):
+    """
+    Yubikey object wrapper
+    """
+
     id = None
     key = None
     prefix = None
@@ -197,7 +205,11 @@ class Yubikey(object):
             self.prefix = str.lower(otp[:-32])
 
 
+###
+# Custom exceptions
+###
 class YubicoWSError(Exception):
+    "Web service error. Defined by yubico documentation."
     def __init__(self, message=None):
         self.msg = "Web Service responded with an error: %s" % message
 
@@ -206,17 +218,15 @@ class YubicoWSError(Exception):
 
 
 class YubicoWSInvalidResponse(Exception):
+    "Exception if the web service answers without same otp/nonce parameters"
     msg = 'Response from the server is invalid'
 
 
-class WSResponseError(Exception):
-    def __str__(self):
-        return repr(self.msg)
-
-
-class OTPIncorrectFormat(Exception):
+class YubicoWSResponseBadSignature(Exception):
+    "Exception if the web service answers with a invalid signature"
     pass
 
 
-class YubicoWSResponseBadSignature(Exception):
+class OTPIncorrectFormat(Exception):
+    "Exception raised if the OTP provided is incorrect"
     pass

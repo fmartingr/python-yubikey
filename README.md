@@ -13,7 +13,7 @@ pip install python-yubikey
 
 ## Register for an API key
 
-```
+``` python
 from yubikey import Yubikey
 
 yubi = Yubikey()
@@ -23,8 +23,8 @@ yubi.register('<EMAIL>', '<INSERT OTP HERE>')
 
 ## Check valid OTP
 
-```
-yubi = Yubikey(<ID>, <Key>)
+``` python
+yubi = Yubikey('<ID>', '<Key>')
 result = yubi.verify('<INSERT ANOHTER OTP HERE>')
 # True / False
 # If <key> is provided, requests will be signed and the responses checked.
@@ -32,7 +32,7 @@ result = yubi.verify('<INSERT ANOHTER OTP HERE>')
 
 ## Optionals
 
-```
+``` python
 # Using custom API server
 # Must be one of YubicoWS._servers
 yubi = Yubikey(123, 'dGhpc3JlcG9yb2Nrcw==', server='api2.yubico.com')

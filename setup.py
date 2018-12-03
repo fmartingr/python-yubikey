@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 import sys
 
-version = '0.2.0'
+version = '0.3.0'
 
 if sys.argv[-1] == 'publish':
     os.system("python setup.py sdist upload")
@@ -27,7 +27,9 @@ setup(
     py_modules=['yubikey'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=open('requirements.txt').read().split('\n'),
+    install_requires=[
+        "requests==2.20.1",
+    ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
